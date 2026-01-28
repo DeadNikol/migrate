@@ -20,9 +20,7 @@ This tool helps you migrate user accounts from various VPN management panels to 
 - Customizable traffic reset strategy
 - Flexible status handling
 - Support for custom headers in both source and destination panels
-
-> [!IMPORTANT]
-> Remnawave 2.x: Migrated users do not have squad. You can add users to squads via Bulk Action.
+- Assign internal squad to all migrated users
 
 ## Migrated User Fields
 
@@ -59,6 +57,8 @@ The tool can be configured using command-line flags or environment variables.
 | --preferred-strategy | PREFERRED_STRATEGY | Preferred traffic reset strategy (NO_RESET, DAY, WEEK, MONTH) |         |
 | --preserve-status    | PRESERVE_STATUS    | Preserve user status from source panel                        | false   |
 | --preserve-subhash   | PRESERVE_SUBHASH   | Preserve user subscription URL hash from source panel         | false   |
+| --internal-squad     | INTERNAL_SQUAD     | UUID(s) of internal squad(s) to assign (comma-separated)      |         |
+| --external-squad     | EXTERNAL_SQUAD     | UUID of external squad to assign to all created users         |         |
 
 ## Usage
 
@@ -107,6 +107,33 @@ The tool can be configured using command-line flags or environment variables.
 
 > Note: If not specified, the original strategy from Marzban will be used. YEAR is converted to NO_RESET.
 
+### Assign Users to Squads
+
+```bash
+# Assign to single internal squad
+./remnawave-migrate \
+  [other flags...] \
+  --internal-squad=e5201a6a-c50e-4b58-9ecb-a4c26c5e74c8
+
+# Assign to multiple internal squads
+./remnawave-migrate \
+  [other flags...] \
+  --internal-squad=uuid1,uuid2,uuid3
+
+# Assign to external squad
+./remnawave-migrate \
+  [other flags...] \
+  --external-squad=f6302b7b-d61f-5c69-0fdc-b5d37d6e85d9
+
+# Assign to both internal and external squads
+./remnawave-migrate \
+  [other flags...] \
+  --internal-squad=uuid1,uuid2 \
+  --external-squad=uuid3
+```
+
+All migrated users will be automatically assigned to the specified squads.
+
 ## Custom Headers
 
 You can provide additional HTTP headers for both the source and destination panels:
@@ -152,6 +179,8 @@ export REMNAWAVE_URL=http://remnawave.example.com
 export REMNAWAVE_TOKEN=your-token
 export DEST_HEADERS="X-Api-Key:abc123"
 export SOURCE_HEADERS="X-Debug:true"
+export INTERNAL_SQUAD=e5201a6a-c50e-4b58-9ecb-a4c26c5e74c8
+export EXTERNAL_SQUAD=f6302b7b-d61f-5c69-0fdc-b5d37d6e85d9
 
 ./remnawave-migrate
 ```
